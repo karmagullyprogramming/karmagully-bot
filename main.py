@@ -1,8 +1,6 @@
 import logging
 import random
 import os
-from flask import Flask
-from threading import Thread
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
@@ -14,7 +12,7 @@ from twilio.rest import Client
 
 # === CONFIGURATION ===
 API_TOKEN = "7624030034:AAGDh8KGZgMaZfIaC82QAodoKsftNJi2_-8"
-ADMIN_ID = 7289622549  # Replace with your real Telegram ID
+ADMIN_ID = 7289622549
 RAZORPAY_KEY_ID = "rzp_live_SoweuPU2b0UJDl"
 RAZORPAY_KEY_SECRET = "7typeA29UPiN7CU9ApeI5tfg"
 TWILIO_ACCOUNT_SID = "AC5c5e5daaa0b0d7aece6808a60781bb81"
@@ -31,16 +29,6 @@ twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 user_data = {}
 pending_approval = {}
 awaiting_decline_reason_for = None
-
-# === KEEP ALIVE FOR REPLIT ===
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "KarmaGully Bot Running!"
-
-def keep_alive():
-    Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 8080}).start()
 
 # === ADMIN KEYBOARD ===
 def get_admin_inline_keyboard(user_id):
@@ -62,7 +50,6 @@ def generate_invoice_pdf(order, invoice_number):
 
     c.setFont("Helvetica-Bold", 20)
     c.drawString(160, height - 50, "KarmaGully Poster Invoice")
-
     c.setFont("Helvetica", 12)
     c.drawString(50, height - 120, f"Invoice No: {invoice_number}")
     c.drawString(50, height - 140, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -96,7 +83,6 @@ def generate_invoice_pdf(order, invoice_number):
     c.drawString(70, y - 40, "Facebook: https://facebook.com/share/171drG6tr4/")
     c.drawString(70, y - 60, "YouTube: https://youtube.com/@karmagully")
     c.drawString(70, y - 80, "Telegram: https://t.me/karmagully")
-
     c.save()
     return file_path
 
@@ -267,7 +253,6 @@ async def handle_admin_decision(callback_query: types.CallbackQuery):
         awaiting_decline_reason_for = user_id
         await bot.send_message(ADMIN_ID, "✏️ Please enter the reason for declining this order.")
 
-# === START BOT ===
+# === RUN BOT ===
 if __name__ == '__main__':
-    keep_alive()
     executor.start_polling(dp, skip_updates=True)
